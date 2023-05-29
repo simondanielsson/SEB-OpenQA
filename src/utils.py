@@ -7,7 +7,7 @@ from pathlib import Path
 from haystack.utils import SquadData
 from box import Box
 
-from inference_hs import BASE_CONFIG_DEFAULT_PATH
+from src import BASE_CONFIG_DEFAULT_PATH
 from configs import CONFIG_PATH
 
 _log = logging.getLogger(__name__)

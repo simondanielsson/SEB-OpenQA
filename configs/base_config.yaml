@@ -7,6 +7,7 @@ download_if_not_found: False
 # -- Pipeline info --
 pipeline_config: "basic.haystack-pipeline.yml"
 additional_pipeline_data:
+  # Change this to the label and doc index names you provided when constructing the index!
   label_index: natural_questions_labels
   doc_index: natural_questions_docs
 

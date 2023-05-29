@@ -28,22 +28,16 @@ sys.path.append(os.getcwd() + "/src")  # add
 
 from data import DATA_PATH
 from evaluation.output import OUTPUT_PATH
-from inference_hs import CONFIG_DEFAULT_PATH
-from inference_hs.data_fetcher import load_data
-from inference_hs.data_postprocessor import get_postprocessor
-from inference_hs.data_preprocessor import get_preprocessor
-from inference_hs.utils import get_queries_and_ids, load_config, augment_config
-from inference_hs.documentstore_manager import DSManagerBase, get_documentstore_manager
-from inference_hs.final_evidence_fusion import FinalEvidenceFusionNode
+from src import CONFIG_DEFAULT_PATH
+from src.data_fetcher import load_data
+from src.data_postprocessor import get_postprocessor
+from src.data_preprocessor import get_preprocessor
+from src.utils import get_queries_and_ids, load_config, augment_config
+from src.documentstore_manager import DSManagerBase, get_documentstore_manager
+from src.final_evidence_fusion import FinalEvidenceFusionNode
 
 _log = logging.getLogger(__name__)
 _log.setLevel(logging.INFO)
-
-# For debugging purposes
-#logging.basicConfig(format="%(levelname)s - %(name)s -  %(message)s", level=logging.WARNING)
-#logging.getLogger("haystack").setLevel(logging.DEBUG)
-
-#warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 warnings.filterwarnings("ignore")
 

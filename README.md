@@ -47,38 +47,18 @@ pip install farm-haystack[all-gpu]
 Execute the pipeline by running 
 
 ```bash
-python3 src/inference_hs/
+python3 src/
 ```
 
 This requires the required train/dev data to be saved to disk. See Section 
 *4. Downloading data* below for more information.   
-
-To evaluate the pipeline using the official SQuADv2 evaluation script, run
-
-```bash
-./evaluate_nq.sh <run_id>
-```
-
-The `<run_id>` of your run is logged when running the `inference_hs` module*. (It is of the format 
-`<date-time>`: for instance `20230228-0942`). The pipeline can also be evaluated using Haystack's 
-`Pipeline.eval` function; this is activated by setting `do_eval` to True in the config. 
-
-Lastly, you can generate a report for all your runs using 
-
-```bash
-python3 generate_report.py
-```
-
-and inspect the report in `evaluation/results/`. Currently, separate reports are generated for inference 
-experiments and evaluation experiments. `report.csv` comes from the result of running the inference pipeline 
-+ benchmark evaluation scripts, and `eval_report.csv` is the results coming from Haystack's own `Pipeline.eval` function (enabled by `do_eval=True` in config).
 
 ### 4. Configure experiments
 
 There are two configurations files governing all ORQA experiments: 
 an [experiment config](configs/config_open_domain.yaml) and a 
 [pipeline config](configs/basic.haystack-pipeline.yml). By default, the inference 
-pipeline assumes these are found in `config/`. The pipeline config used by the experiment
+pipeline assumes these are found in `configs/`. The pipeline config used by the experiment
 is an entry in the experiment config (`pipeline_config`). 
 
 There is also an option to supply different configs, instead of changing the default configs.
@@ -108,10 +88,10 @@ SQuAD-format, strongly influenced by e.g. Facebook's own Natural Questions simpl
 
 #### 4.1 Converting Natural Questions
 1. Download the Natural Questions train and dev set from the [official website](https://ai.google.com/research/NaturalQuestions/download).
-2. Invoke `src/nq_to_squad/nq_to_squad.py` as described in the module docstring. The train set should 
+2. Invoke `squad_fmt_conversion/nq_to_squad/nq_to_squad.py` as described in the module docstring. The train set should 
 be converted to JSON Lines using the `--as_jsonl` flag.
 3. Point to the train and dev set paths in the config.
 
 #### 4.2 Converting TriviaQA
 
-_TODO_
+Have a look in `squad_fmt_conversion/triviaQA_to_squad/README.md`.

@@ -1,3 +1,6 @@
+# See the following for how to set up this pipeline declaration config:
+# - https://www.deepset.ai/blog/configuring-haystack-pipelines-with-yaml
+
 version: 1.14.0
 
 components:
@@ -5,8 +8,8 @@ components:
 - name: DocumentStore
   type: FAISSDocumentStore
   params:
-    sql_url: sqlite:///indeces/faiss_document_store-triviaQAweb-sbert-Flat.db
-    embedding_dim: 384
+    sql_url: sqlite:///indeces/<name of the documentstore db to create>
+    embedding_dim: 768
     faiss_index_factory_str: Flat 
     # See index discussion: https://github.com/facebookresearch/faiss/wiki/Guidelines-to-choose-an-index
     index: natural_questions_docs  # make sure these align with additional_data in config
@@ -16,7 +19,6 @@ components:
   #params: 
   #  faiss_index_path: 'indeces/faiss_index-NQ-Flat.faiss'
   #  faiss_config_path: 'indeces/faiss_index-NQ-Flat.json'
->>>>>>> Stashed changes
 
 - name: ESDocumentStore
   type: ElasticsearchDocumentStore
@@ -39,15 +41,12 @@ components:
 
 - name: Retriever  # do not change name
   type: EmbeddingRetriever
-  # EmbeddingRetriever
-  # DensePassageRetriever 
   params:
     embedding_model: sentence-transformers/all-MiniLM-L6-v2
     # REMEMBER: if using SBERT, change similarity measure in document store to `cosine`!!!!!
     # facebook/contriever-msmarco
     # sentence-transformers/all-MiniLM-L6-v2
     document_store: DocumentStore
-    #batch_size: 16
 
 - name: SparseRetriever
   type: BM25Retriever
@@ -64,15 +63,16 @@ components:
 
 - name: Reader
   type: FARMReader
-  params: # try this one later #
-    model_name_or_path: deepset/deberta-v3-base-squad2 
-    # deepset/roberta-base-squad2 
-    # deepset/deberta-v3-base-squad2 
-    # deepset/minilm-uncased-squad2
-    # nlpconnect/roberta-base-squad2-nq
-    # remunds/MiniLM_NaturalQuestions
-    # AsmaAwad/distilbert-base-uncased-NaturalQuestions
-    # FabianWillner/bert-base-uncased-finetuned-triviaqa
+  params:
+    # some HF model name, e.g.
+    # - deepset/roberta-base-squad2
+    # - deepset/deberta-v3-base-squad2
+    # - deepset/minilm-uncased-squad2
+    # - nlpconnect/roberta-base-squad2-nq
+    # - remunds/MiniLM_NaturalQuestions
+    # - AsmaAwad/distilbert-base-uncased-NaturalQuestions
+    # - FabianWillner/bert-base-uncased-finetuned-triviaqa
+    model_name_or_path: deepset/deberta-v3-base-squad2
     return_no_answer: True
     #top_k: 5
     #batch_size: 50

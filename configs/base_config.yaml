@@ -1,0 +1,30 @@
+task: "question-answering"
+
+# -- Dataset info --
+loader_type: file
+download_if_not_found: False
+
+# -- Pipeline info --
+pipeline_config: "basic.haystack-pipeline.yml"
+additional_pipeline_data:
+  label_index: natural_questions_labels
+  doc_index: natural_questions_docs
+
+# -- Output info --
+save_output: True
+
+
+# -- Other datasets --
+
+# NQ full Haystack S3
+#data_path: "nq_full/nq_dev.json"
+
+# NQ dev full (from Google AI website and reformatted, no empty answers (~1.7k samples))
+#data_path: "nq_full/nq_dev_squad_fmt.json"
+
+# NQ subset
+#data_path: "nq/nq_dev_subset_v2.json"
+
+# SQuAD dev
+# dataset_name: squad_v2
+# data_path: squad/dev-v20.json

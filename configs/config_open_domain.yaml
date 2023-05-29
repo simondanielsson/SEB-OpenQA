@@ -1,0 +1,86 @@
+# -- Dataset info --
+# NQ full from our nq_to_squad module, has is_impossible.
+# to remove impossible questions 
+#   - during do_eval, check eval config
+#   - during inference, use nq_dev_squad_fmt_v4.json
+#data_path: nq_full/nq_dev_squad_multiple_answers.json
+#data_path: nq/nq_dev_subset_v2.json
+#data_path: squad/dev-v20.json
+#data_path: triviaQA/verified_wikipedia_dev_squad_fmt.json
+data_path: triviaQA/verified_web_dev_squad_fmt.json
+
+# -- Pipeline info --
+pipeline_name: query_pipeline
+# basic_ranker_pipeline
+# query_pipeline 
+# fef_large_pipeline
+# sparse_query_pipeline
+do_eval: True
+eval_batch: True
+batch_size: 16
+
+# -- Evalutation config, activated by do_eval == True --
+drop_negative_labels: False
+drop_no_answers: False
+document_scope: document_id_or_answer
+answer_scope: any
+# eval-specific node parameters
+eval_config:
+  params:
+<<<<<<< Updated upstream
+    SparseRetriever:
+      top_k: 5
+      debug: False
+    Reader:
+      top_k: [1, 5]
+      debug: False
+    #Ranker: 
+    #  top_k: 5
+    #  debug: False
+=======
+    Retriever:
+      top_k: 20
+      debug: True
+    Reader:
+      top_k: [1, 5]
+      debug: True
+    Ranker: 
+      top_k: 3
+      debug: True
+    FinalEvidenceFusion: 
+      debug: True
+>>>>>>> Stashed changes
+  add_isolated_node_eval: True
+  sas_model_name_or_path: cross-encoder/stsb-distilroberta-base #sentence-transformers/all-MiniLM-L6-v2 
+
+
+# -- Documentstore info --
+reset_documentstore: True  # if using FAISS: remember to have to correct DS params in pipeline config
+<<<<<<< Updated upstream
+faiss_index_path: 'indeces/faiss_index-triviaQA-traindev-dpr-Flat.faiss' # if reseting (and thus saving)
+faiss_config_path: 'indeces/faiss_index-triviaQA-traindev-dpr-Flat.json'
+write_train_documents: True
+train_documents_path: triviaQA/verified_wikipedia_train.json
+# nq_full/simplified-nq-train-long_ans_context.jsonl  # NQ
+# squad/train_docs-v2.0.jsonl # SQuADv2
+# triviaQA/verified_wikipedia_train.json  # TriviaQA Wiki
+populate_document_store_batch_size: 1000
+=======
+faiss_index_path: 'indeces/faiss_index-triviaQAweb-sbert-Flat.faiss' # if reseting (and thus saving)
+faiss_config_path: 'indeces/faiss_index-triviaQAweb-sbert-Flat.json'
+write_train_documents: True
+train_documents_path: triviaQA/web_train_squad_fmt.json
+# 'nq_full/simplified-nq-train-long_ans_context.jsonl'  # NQ
+#train_documents_path: 'squad/train_docs-v2.0.jsonl' # SQuADv2
+populate_document_store_batch_size: 100
+>>>>>>> Stashed changes
+
+# -- Preprocessor info --
+do_preprocessing: True
+preprocessor_params:
+  split_by: word
+  split_length: 200
+  split_overlap: 30
+  split_respect_sentence_boundary: False
+  clean_empty_lines: True
+  clean_whitespace: False

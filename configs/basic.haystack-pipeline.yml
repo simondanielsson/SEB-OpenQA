@@ -1,0 +1,170 @@
+version: 1.14.0
+
+components:
+
+- name: DocumentStore
+  type: FAISSDocumentStore
+  params:
+    sql_url: sqlite:///indeces/faiss_document_store-triviaQAweb-sbert-Flat.db
+    embedding_dim: 384
+    faiss_index_factory_str: Flat 
+    # See index discussion: https://github.com/facebookresearch/faiss/wiki/Guidelines-to-choose-an-index
+    index: natural_questions_docs  # make sure these align with additional_data in config
+    # Note: Use `cosine` if using Sentence-Transformers, e.g. S-BERT
+    similarity: cosine  
+  # uncomment this if NOT resetting ds
+  #params: 
+  #  faiss_index_path: 'indeces/faiss_index-NQ-Flat.faiss'
+  #  faiss_config_path: 'indeces/faiss_index-NQ-Flat.json'
+>>>>>>> Stashed changes
+
+- name: ESDocumentStore
+  type: ElasticsearchDocumentStore
+  params:
+    embedding_field: emb
+    excluded_meta_data:
+    - emb
+    index: natural_questions_docs
+    label_index: natural_questions_labels
+
+- name: Preprocessor  # do not change name
+  type: PreProcessor
+  params:
+    split_by: word
+    split_length: 200
+    split_overlap: 0
+    split_respect_sentence_boundary: False
+    clean_empty_lines: False
+    clean_whitespace: False
+
+- name: Retriever  # do not change name
+  type: EmbeddingRetriever
+  # EmbeddingRetriever
+  # DensePassageRetriever 
+  params:
+    embedding_model: sentence-transformers/all-MiniLM-L6-v2
+    # REMEMBER: if using SBERT, change similarity measure in document store to `cosine`!!!!!
+    # facebook/contriever-msmarco
+    # sentence-transformers/all-MiniLM-L6-v2
+    document_store: DocumentStore
+    #batch_size: 16
+
+- name: SparseRetriever
+  type: BM25Retriever
+  params: 
+    document_store: ESDocumentStore
+    
+- name: Ranker
+  type: SentenceTransformersRanker
+  params: 
+    model_name_or_path: cross-encoder/ms-marco-MiniLM-L-4-v2
+    # cross-encoder/ms-marco-MiniLM-L-4-v2
+    # cross-encoder/ms-marco-MiniLM-L-12-v2
+    #top_k: 5
+
+- name: Reader
+  type: FARMReader
+  params: # try this one later #
+    model_name_or_path: deepset/deberta-v3-base-squad2 
+    # deepset/roberta-base-squad2 
+    # deepset/deberta-v3-base-squad2 
+    # deepset/minilm-uncased-squad2
+    # nlpconnect/roberta-base-squad2-nq
+    # remunds/MiniLM_NaturalQuestions
+    # AsmaAwad/distilbert-base-uncased-NaturalQuestions
+    # FabianWillner/bert-base-uncased-finetuned-triviaqa
+    return_no_answer: True
+    #top_k: 5
+    #batch_size: 50
+    
+- name: FinalEvidenceFusion
+  type: FinalEvidenceFusionNode
+  params:
+    reader_score_weight: 1.0
+    retriever_score_weight: 0.2
+    top_k: 5
+
+pipelines:
+- name: query_pipeline  
+  nodes:
+  - inputs:
+    - Query
+    name: Retriever
+  - inputs:
+    - Retriever
+    name: Reader
+    
+- name: basic_ranker_pipeline  
+  nodes:
+  - inputs:
+    - Query
+    name: Retriever
+  - inputs:
+    - Retriever
+    name: Ranker
+  - inputs:
+    - Ranker
+    name: Reader
+
+- name: sparse_query_pipeline
+  nodes:
+  - inputs:
+    - Query
+    name: SparseRetriever
+  - inputs:
+    - SparseRetriever
+    name: Reader
+
+# not used
+- name: index_pipeline 
+  nodes:
+  - inputs:
+      - File
+    name: Preprocessor
+  - inputs:
+      - Preprocessor
+    name: DocumentStore
+
+- name: hybrid_pipeline
+  nodes: 
+  - inputs:
+    - Query
+    name: SparseRetriever
+  - inputs: 
+    - Query
+    name: Retriever  # dense
+  - inputs:
+    - Retriever
+    name: Reader
+
+- name: fef_pipeline  
+  nodes:
+  - inputs:
+    - Query
+    name: Retriever
+  - inputs:
+    - Retriever
+    name: Reader
+  - inputs:
+    - Retriever
+    name: Ranker
+  - inputs:
+    - Reader
+    - Ranker
+    name: FinalEvidenceFusion
+  
+- name: fef_large_pipeline  
+  nodes:
+  - inputs:
+    - Query
+    name: Retriever
+  - inputs:
+    - Retriever
+    name: Ranker
+  - inputs:
+    - Ranker
+    name: Reader
+  - inputs:
+    - Reader
+    - Ranker
+    name: FinalEvidenceFusion

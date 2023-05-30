@@ -110,7 +110,6 @@ class InMemoryDSManager(DSManagerBase):
             pass
 
 
-
 DOCUMENTSTORE_MANAGERS = {
     "ElasticsearchDocumentStore": ElasticsearchDSManager,
     "FAISSDocumentStore": FAISSDSManager,

@@ -23,6 +23,7 @@ from more_itertools import chunked
 from yaml import SafeLoader
 from tqdm import tqdm
 
+# Can be removed if using .env
 sys.path.append(os.getcwd())  # add
 sys.path.append(os.getcwd() + "/src")  # add
 
@@ -34,6 +35,7 @@ from src.data_postprocessor import get_postprocessor
 from src.data_preprocessor import get_preprocessor
 from src.utils import get_queries_and_ids, load_config, augment_config
 from src.documentstore_manager import DSManagerBase, get_documentstore_manager
+# must be imported to enable creation of FEF pipeline through yaml
 from src.final_evidence_fusion import FinalEvidenceFusionNode
 
 _log = logging.getLogger(__name__)

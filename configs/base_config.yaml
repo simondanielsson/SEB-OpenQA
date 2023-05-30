@@ -1,3 +1,5 @@
+# Base config. Does not in general have to be modified.
+
 task: "question-answering"
 
 # -- Dataset info --

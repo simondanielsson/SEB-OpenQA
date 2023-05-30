@@ -1,16 +1,28 @@
-# SEB-workspace
+# SEB-OpenQA
 
-This is a temporary workspace for a Master's thesis conducted for SEB.
+This is a repository for open-domain question-answering (OpenQA) systems, containing a pipeline for evaluating 
+system configurations on labeled OpenQA datasets. It is built upon the `farm-haystack` package by _deepset_, and was 
+developed during the Master's thesis project _Question-answering in the Financial Domain_ at The Factulty of Engineering at 
+Lund University in conjunction with the bank _SEB_. See below for authors. See [this repo](https://github.com/simondanielsson/SEB-OpenQA-app)
+for a QA application built upon this thesis' work.
 
 ### 1. The ORQA pipeline 
 
 :checkered_flag: The goal of an open-retrieval question-answering (ORQA) system is to answer a given question
-using a (potentially huge) collection of documents. Our pipeline is extractive, meaning answer 
-is a minimal span containing the answer to the question, found in one of the documents. 
+using a (potentially huge) collection of documents. Our pipelines can be either
+- **extractive**, meaning answer is a minimal span containing the answer to the question, found in one of the documents, or
+- **generative**, meaning the answer is generated from a prompt containing a question, documents, instructions, and/or examples.
 
 
 #### 1.1 Format 
-The ORQA pipeline inputs a SQuAD-like ORQA dataset (like *Natural Questions*), 
+
+#### Evaluation pipeline with `haystack`'s evaluation script
+
+The pipeline takes a experiment and pipeline configuration, and outputs performance scores across a dataset in json.  
+
+##### Inference pipeline with official evaluation scripts 
+
+The OpenQA pipeline inputs a SQuAD-like ORQA dataset (like *Natural Questions*), 
 and outputs results to `evaluation/output/<dataset_name>/<date_and_time>/`. The results 
 include the predictions, experiment configurations, and metadata (such as inference runtime). 
 
@@ -44,7 +56,7 @@ pip install farm-haystack[all-gpu]
 
 ### 3. How to run
 
-Execute the pipeline by running 
+Configure your experiment and pipelines in the yaml's under `configs/`. Then execute the pipeline by running 
 
 ```bash
 python3 src/
@@ -59,7 +71,7 @@ There are two configurations files governing all ORQA experiments:
 an [experiment config](configs/config_open_domain.yaml) and a 
 [pipeline config](configs/basic.haystack-pipeline.yml). By default, the inference 
 pipeline assumes these are found in `configs/`. The pipeline config used by the experiment
-is an entry in the experiment config (`pipeline_config`). 
+is an entry in the experiment config (`pipeline_config`). Make sure all entries in the configs are properly filled in.
 
 There is also an option to supply different configs, instead of changing the default configs.
 This is particularly useful for reproducing old experiments using the configs supplied by the pipeline 
@@ -84,7 +96,10 @@ options:
 
 The pipeline currently only supports loading data from disk. Additionally, Haystack
 is assuming all data is SQuAD-formatted. We provide scripts for converting a few datasets into
-SQuAD-format, strongly influenced by e.g. Facebook's own Natural Questions simplification script. 
+SQuAD-format, strongly influenced by e.g. Facebook's own Natural Questions simplification script.
+
+We provide for reference an example dataset under `data/nq_subset/` of the appropriate format. It is a subset 
+of the Natural Questions dataset. 
 
 #### 4.1 Converting Natural Questions
 1. Download the Natural Questions train and dev set from the [official website](https://ai.google.com/research/NaturalQuestions/download).
@@ -95,3 +110,8 @@ be converted to JSON Lines using the `--as_jsonl` flag.
 #### 4.2 Converting TriviaQA
 
 Have a look in `squad_fmt_conversion/triviaQA_to_squad/README.md`.
+
+
+#### Authors
+
+The thesis was conducted by Simon Danielsson, and Nils Romanus.

@@ -6,6 +6,8 @@ developed during the Master's thesis project _Question-answering in the Financia
 Lund University in conjunction with the bank _SEB_. See below for authors. See [this repo](https://github.com/simondanielsson/SEB-OpenQA-app)
 for a QA application built upon this thesis' work.
 
+![image](images/gen_vs_extr.png)
+
 ### 1. The ORQA pipeline 
 
 :checkered_flag: The goal of an open-retrieval question-answering (ORQA) system is to answer a given question
